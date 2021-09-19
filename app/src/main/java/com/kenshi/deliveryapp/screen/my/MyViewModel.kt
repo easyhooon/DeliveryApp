@@ -1,4 +1,4 @@
-package com.kenshi.deliveryapp.screen.main.my
+package com.kenshi.deliveryapp.screen.my
 
 import com.kenshi.deliveryapp.screen.base.BaseViewModel
 

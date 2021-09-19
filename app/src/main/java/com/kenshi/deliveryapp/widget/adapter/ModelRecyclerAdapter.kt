@@ -7,7 +7,7 @@ import com.kenshi.deliveryapp.model.Model
 import com.kenshi.deliveryapp.screen.base.BaseViewModel
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import com.kenshi.deliveryapp.util.wrapper.ModelViewHolderWrapper
-import com.kenshi.deliveryapp.widget.adapter.listener.AdapterListener
+import com.kenshi.deliveryapp.widget.adapter.listener.restaurant.RestaurantListListener
 import com.kenshi.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 
 
@@ -19,7 +19,7 @@ class ModelRecyclerAdapter<M: Model, VM: BaseViewModel>(
     //공통적으로 리소스에 접근가능하도록 resourceProvider 를 만들어줌
     private val resourcesProvider: ResourcesProvider,
     //뷰홀더 구현시에 필요한 adapterListener
-    private val adapterListener: AdapterListener
+    private val adapterListener: RestaurantListListener
 ) : ListAdapter<Model, ModelViewHolder<M>>(Model.DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModelViewHolder<M> {
@@ -42,7 +42,7 @@ class ModelRecyclerAdapter<M: Model, VM: BaseViewModel>(
     //타입을 순서(인덱스) 값으로 반환
     override fun getItemViewType(position: Int): Int = modelList[position].type.ordinal
 
-    override fun submitList(list: MutableList<Model>?) {
+    override fun submitList(list: List<Model>?) {
         list?.let {
             modelList = it
         }

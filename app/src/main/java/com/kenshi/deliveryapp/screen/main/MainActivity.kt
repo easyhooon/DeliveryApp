@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.databinding.ActivityMainBinding
-import com.kenshi.deliveryapp.screen.main.home.HomeFragment
-import com.kenshi.deliveryapp.screen.main.my.MyFragment
+import com.kenshi.deliveryapp.screen.home.HomeFragment
+import com.kenshi.deliveryapp.screen.my.MyFragment
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 

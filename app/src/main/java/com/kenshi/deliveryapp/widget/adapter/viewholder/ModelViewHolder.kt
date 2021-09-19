@@ -10,8 +10,8 @@ import com.kenshi.deliveryapp.widget.adapter.listener.AdapterListener
 //Model 을 generic 으로 받고 (<> 내부)
 abstract class ModelViewHolder<M: Model>(
     binding: ViewBinding,
-    private val viewModel: BaseViewModel,
-    private val resourcesProvider: ResourcesProvider
+    protected val viewModel: BaseViewModel,
+    protected val resourcesProvider: ResourcesProvider
 ): RecyclerView.ViewHolder(binding.root) {
 
     abstract fun reset()

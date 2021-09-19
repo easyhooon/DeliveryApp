@@ -5,12 +5,14 @@ import android.view.ViewGroup
 import android.view.ViewParent
 import androidx.recyclerview.widget.RecyclerView
 import com.kenshi.deliveryapp.databinding.ViewholderEmptyBinding
+import com.kenshi.deliveryapp.databinding.ViewholderRestaurantBinding
 import com.kenshi.deliveryapp.model.CellType
 import com.kenshi.deliveryapp.model.Model
 import com.kenshi.deliveryapp.screen.base.BaseViewModel
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import com.kenshi.deliveryapp.widget.adapter.viewholder.EmptyViewHolder
 import com.kenshi.deliveryapp.widget.adapter.viewholder.ModelViewHolder
+import com.kenshi.deliveryapp.widget.adapter.viewholder.RestaurantViewHolder
 
 object ModelViewHolderWrapper {
 
@@ -27,6 +29,10 @@ object ModelViewHolderWrapper {
                 ViewholderEmptyBinding.inflate(inflater, parent, false),
                 viewModel,
                 resourcesProvider
+            )
+            CellType.RESTAURANT_CELL -> RestaurantViewHolder(
+                ViewholderRestaurantBinding.inflate(inflater, parent, false),
+                    viewModel, resourcesProvider
             )
         }
         return viewHolder as ModelViewHolder<M>
