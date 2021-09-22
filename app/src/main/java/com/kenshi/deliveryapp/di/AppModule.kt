@@ -1,5 +1,6 @@
 package com.kenshi.deliveryapp.di
 
+import com.kenshi.deliveryapp.data.entity.MapSearchInfoEntity
 import com.kenshi.deliveryapp.data.repository.map.DefaultMapRepository
 import com.kenshi.deliveryapp.data.repository.map.MapRepository
 import com.kenshi.deliveryapp.data.repository.restaurant.DefaultRestaurantRepository
@@ -8,6 +9,7 @@ import com.kenshi.deliveryapp.screen.home.HomeViewModel
 import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantCategory
 import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantListViewModel
 import com.kenshi.deliveryapp.screen.my.MyViewModel
+import com.kenshi.deliveryapp.screen.mylocation.MyLocationViewModel
 import com.kenshi.deliveryapp.util.provider.DefaultResourcesProvider
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +29,7 @@ val appModule = module {
     //restaurantCategory 를 필요로 하기 때문에 람다로 넘겨줌
     //constructor 를 통해 restaurant 카테고리를 다음과 같이 구성
     viewModel { (restaurantCategory: RestaurantCategory) -> RestaurantListViewModel(restaurantCategory, get()) }
+    viewModel { (mapSearchInfoEntity: MapSearchInfoEntity) -> MyLocationViewModel(mapSearchInfoEntity)}
 
 
     // < > <-- 반환 타입

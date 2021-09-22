@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -19,6 +20,7 @@ import com.kenshi.deliveryapp.databinding.FragmentHomeBinding
 import com.kenshi.deliveryapp.screen.base.BaseFragment
 import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantCategory
 import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantListFragment
+import com.kenshi.deliveryapp.screen.mylocation.MyLocationActivity
 import com.kenshi.deliveryapp.widget.adapter.RestaurantListFragmentPagerAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -44,6 +46,9 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 //result 의 데이저 정보를 기반으로 검색한 정보를 가져옴
                 //위치를 한번 더 불러옴
                 result.data?.getParcelableExtra<MapSearchInfoEntity>(HomeViewModel.MY_LOCATION_KEY)
+                    ?.let { myLocationInfo ->
+                    viewModel.loadReverseGeoInfo(myLocationInfo.locationLatLng)
+                }
             }
     }
 
@@ -79,8 +84,13 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             //MyLocationActivity
             //viewModel 에서 현재 검색한 위치 정보에 대해 있는지 판별을 하고
             //그것을 기반으로 activity 를 실행
-            viewModel.getMapSearchInfo()?.let{
-
+            viewModel.getMapSearchInfo()?.let{ mapInfo ->
+                changeLocationLauncher.launch(
+                    //액티비티를 실행 시켜줌
+                    MyLocationActivity.newIntent(
+                        requireContext(), mapInfo
+                    )
+                )
             }
         }
     }
