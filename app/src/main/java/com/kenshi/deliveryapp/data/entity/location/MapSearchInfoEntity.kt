@@ -1,4 +1,4 @@
-package com.kenshi.deliveryapp.data.entity
+package com.kenshi.deliveryapp.data.entity.location
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

@@ -1,6 +1,7 @@
 package com.kenshi.deliveryapp.screen.mylocation
 
-import com.kenshi.deliveryapp.data.entity.MapSearchInfoEntity
+import androidx.annotation.StringRes
+import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
 
 sealed class MyLocationState {
 
@@ -17,6 +18,10 @@ sealed class MyLocationState {
     data class Confirm(
         //마지막 위치를 넘겨줌
         val mapSearchInfoEntity: MapSearchInfoEntity
+    ): MyLocationState()
+
+    data class Error(
+        @StringRes val messageId: Int
     ): MyLocationState()
 
 }

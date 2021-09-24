@@ -1,7 +1,8 @@
-package com.kenshi.deliveryapp.data.entity
+package com.kenshi.deliveryapp.data.entity.restaurant
 
 import android.os.Parcelable
-import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantCategory
+import com.kenshi.deliveryapp.data.entity.Entity
+import com.kenshi.deliveryapp.screen.main.home.restaurant.RestaurantCategory
 import kotlinx.parcelize.Parcelize
 
 //데이터의 형태로 담아서 번들, 인텐트로 넘겨 처리해야 할 수 있기 때문에 parcelize
@@ -21,5 +22,4 @@ data class RestaurantEntity (
     val reviewCount: Int,
     val deliveryTimeRange:Pair<Int,Int>,
     val deliveryTipRange: Pair<Int,Int>
-
-):Entity, Parcelable
+): Entity, Parcelable

@@ -21,6 +21,7 @@ abstract class BaseActivity<VM: BaseViewModel, VB: ViewBinding> : AppCompatActiv
         super.onCreate(savedInstanceState)
         binding = getViewBinding()
         setContentView(binding.root)
+        initState()
     }
 
     //상태 값을 초기화

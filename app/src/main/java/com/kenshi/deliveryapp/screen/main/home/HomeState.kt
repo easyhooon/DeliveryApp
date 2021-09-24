@@ -1,7 +1,7 @@
-package com.kenshi.deliveryapp.screen.home
+package com.kenshi.deliveryapp.screen.main.home
 
 import androidx.annotation.StringRes
-import com.kenshi.deliveryapp.data.entity.MapSearchInfoEntity
+import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
 
 //State Pattern by Sealed Class
 sealed class HomeState {
@@ -14,7 +14,8 @@ sealed class HomeState {
     //위치(검색) 정보를 넣어주기 위한 용도
     //data class 로 변경 예정
     data class Success(
-        val mapSearchInfo: MapSearchInfoEntity
+        val mapSearchInfoEntity: MapSearchInfoEntity,
+        val isLocationSame: Boolean
     ): HomeState()
 
     data class Error(

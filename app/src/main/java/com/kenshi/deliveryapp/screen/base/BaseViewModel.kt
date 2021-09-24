@@ -20,7 +20,7 @@ abstract class BaseViewModel : ViewModel() {
     protected var stateBundle: Bundle? = null
 
     //공통적으로 호출했었을 때 이 함수를 통해 데이터를 가공
-    open fun fetchData(): Job = viewModelScope.launch{}
+    open fun fetchData(): Job = viewModelScope.launch{ }
 
     //뷰의 대한 상태를 저장하기 위해서
     open fun storeState(stateBundle: Bundle) {

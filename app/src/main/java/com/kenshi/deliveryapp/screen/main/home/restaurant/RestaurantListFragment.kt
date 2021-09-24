@@ -1,8 +1,9 @@
-package com.kenshi.deliveryapp.screen.home.restaurant
+package com.kenshi.deliveryapp.screen.main.home.restaurant
 
 import android.util.Log
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
 import com.kenshi.deliveryapp.databinding.FragmentRestaurantListBinding
 import com.kenshi.deliveryapp.model.restaurant.RestaurantModel
 import com.kenshi.deliveryapp.screen.base.BaseFragment
@@ -20,9 +21,15 @@ class RestaurantListFragment: BaseFragment<RestaurantListViewModel, FragmentRest
 //        get() = TODO("Not yet implemented")
 
     private val restaurantCategory by lazy { arguments?.getSerializable(RESTAURANT_CATEGORY_KEY) as RestaurantCategory}
+    private val locationLatLng by lazy { arguments?.getParcelable<LocationLatLngEntity>(LOCATION_KEY) }
 
     //viewModel 호출 시에 생성이 되기 위해서 파라미터로 호출할 때 넣어줌
-    override val viewModel by viewModel<RestaurantListViewModel>{ parametersOf(restaurantCategory)  }
+    override val viewModel by viewModel<RestaurantListViewModel>{
+        parametersOf(
+            restaurantCategory,
+            locationLatLng
+        )
+    }
 
     override fun getViewBinding(): FragmentRestaurantListBinding
         = FragmentRestaurantListBinding.inflate(layoutInflater)
@@ -38,7 +45,6 @@ class RestaurantListFragment: BaseFragment<RestaurantListViewModel, FragmentRest
                 override fun onClickItem(model: RestaurantModel) {
                     Toast.makeText(requireContext(), "$model", Toast.LENGTH_SHORT).show()
                 }
-
             })
     }
 
@@ -47,20 +53,28 @@ class RestaurantListFragment: BaseFragment<RestaurantListViewModel, FragmentRest
     }
 
     //viewModel 구독처리
-    override fun observeData() = viewModel.restaurantListLiveData.observe(viewLifecycleOwner) {
-        Log.e("restaurantList", it.toString() )
-        //recyclerView 의 어댑터 구성
-        adapter.submitList(it)
+    override fun observeData() {
+        viewModel.restaurantListLiveData.observe(viewLifecycleOwner) {
+            Log.e("restaurantList", it.toString())
+            //recyclerView 의 어댑터 구성
+            adapter.submitList(it)
+        }
     }
 
     companion object {
         const val RESTAURANT_CATEGORY_KEY = "restaurantCategory"
+        const val LOCATION_KEY = "location"
 
-        fun newInstance(restaurantCategory: RestaurantCategory): RestaurantListFragment {
+        fun newInstance(
+            restaurantCategory: RestaurantCategory,
+            locationLatLngEntity: LocationLatLngEntity
+        ): RestaurantListFragment {
             return RestaurantListFragment().apply {
                 //pair 로 담아서 처리할 수 있도록 만듬
                 arguments = bundleOf(
-                    RESTAURANT_CATEGORY_KEY to restaurantCategory
+                    RESTAURANT_CATEGORY_KEY to restaurantCategory,
+                    //key 추가
+                    LOCATION_KEY to locationLatLngEntity
                 )
             }
         }

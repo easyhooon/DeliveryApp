@@ -1,4 +1,4 @@
-package com.kenshi.deliveryapp.screen.home.restaurant
+package com.kenshi.deliveryapp.screen.main.home.restaurant
 
 import androidx.annotation.StringRes
 import com.kenshi.deliveryapp.R

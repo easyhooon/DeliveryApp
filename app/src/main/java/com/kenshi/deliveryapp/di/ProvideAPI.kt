@@ -23,7 +23,6 @@ fun provideMapRetrofit (
         .addConverterFactory(gsonConverterFactory)
         .client(okHttpClient)
         .build()
-
 }
 
 fun provideGsonConvertFactory(): GsonConverterFactory {

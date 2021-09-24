@@ -2,8 +2,8 @@ package com.kenshi.deliveryapp.data.response.address
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.kenshi.deliveryapp.data.entity.LocationLatLngEntity
-import com.kenshi.deliveryapp.data.entity.MapSearchInfoEntity
+import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
+import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
 
 data class AddressInfo(
     @SerializedName("fullAddress")
@@ -56,10 +56,11 @@ data class AddressInfo(
     val roadCode: String?
 ) {
     //변환 함수를 만듬
-    fun toSearchInfoEntity(locationLatLngEntity: LocationLatLngEntity) = MapSearchInfoEntity(
+    fun toSearchInfoEntity(
+        locationLatLngEntity: LocationLatLngEntity
+    ) = MapSearchInfoEntity(
         fullAddress = fullAddress ?: "주소 정보 없음",
         name = buildingName ?: "빌딩 정보 없음",
         locationLatLng = locationLatLngEntity
-
     )
 }

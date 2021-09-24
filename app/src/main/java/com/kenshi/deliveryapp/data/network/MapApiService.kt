@@ -2,6 +2,7 @@ package com.kenshi.deliveryapp.data.network
 
 
 import com.kenshi.deliveryapp.data.response.address.AddressInfoResponse
+import com.kenshi.deliveryapp.data.response.search.SearchResponse
 import com.kenshi.deliveryapp.data.url.Key
 import com.kenshi.deliveryapp.data.url.Url
 import retrofit2.Response
@@ -11,7 +12,7 @@ import retrofit2.http.Query
 
 interface MapApiService {
 
-    /*@GET(Url.GET_TMAP_POIS)
+    @GET(Url.GET_TMAP_POIS)
     suspend fun getSearchLocation(
         @Header("appKey") appKey: String = Key.TMAP_API,
         @Query("version") version: Int = 1,
@@ -29,6 +30,7 @@ interface MapApiService {
         @Query("centerLon") centerLon: String? = null,
         @Query("centerLat") centerLat: String? = null
     ): Response<SearchResponse>
+
 
     @GET(Url.GET_TMAP_POIS_AROUND)
     suspend fun getSearchLocationAround(
@@ -48,7 +50,7 @@ interface MapApiService {
         @Query("reqCoordType") reqCoordType: String? = null,
         @Query("centerLon") centerLon: String? = null,
         @Query("centerLat") centerLat: String? = null
-    ): Response<SearchResponse>*/
+    ): Response<SearchResponse>
 
     @GET(Url.GET_TMAP_REVERSE_GEO_CODE)
     suspend fun getReverseGeoCode(

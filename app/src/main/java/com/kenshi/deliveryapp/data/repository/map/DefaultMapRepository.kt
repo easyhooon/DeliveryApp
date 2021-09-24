@@ -1,6 +1,6 @@
 package com.kenshi.deliveryapp.data.repository.map
 
-import com.kenshi.deliveryapp.data.entity.LocationLatLngEntity
+import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
 import com.kenshi.deliveryapp.data.network.MapApiService
 import com.kenshi.deliveryapp.data.response.address.AddressInfo
 import kotlinx.coroutines.CoroutineDispatcher
