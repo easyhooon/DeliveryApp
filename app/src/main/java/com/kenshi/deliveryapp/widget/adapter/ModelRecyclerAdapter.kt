@@ -6,7 +6,8 @@ import com.kenshi.deliveryapp.model.CellType
 import com.kenshi.deliveryapp.model.Model
 import com.kenshi.deliveryapp.screen.base.BaseViewModel
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
-import com.kenshi.deliveryapp.util.wrapper.ModelViewHolderWrapper
+import com.kenshi.deliveryapp.util.mapper.ModelViewHolderMapper
+import com.kenshi.deliveryapp.widget.adapter.listener.AdapterListener
 import com.kenshi.deliveryapp.widget.adapter.listener.restaurant.RestaurantListListener
 import com.kenshi.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 
@@ -19,12 +20,12 @@ class ModelRecyclerAdapter<M: Model, VM: BaseViewModel>(
     //공통적으로 리소스에 접근가능하도록 resourceProvider 를 만들어줌
     private val resourcesProvider: ResourcesProvider,
     //뷰홀더 구현시에 필요한 adapterListener
-    private val adapterListener: RestaurantListListener
+    private val adapterListener: AdapterListener
 ) : ListAdapter<Model, ModelViewHolder<M>>(Model.DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModelViewHolder<M> {
         //뷰홀더 wrapper 들을 구현해서 여러가지 viewHolder 들을 각 타입에 맞게 반환 하도록
-        return ModelViewHolderWrapper.map(parent, CellType.values()[viewType], viewModel, resourcesProvider)
+        return ModelViewHolderMapper.map(parent, CellType.values()[viewType], viewModel, resourcesProvider)
     }
 
     @Suppress("UNCHECKED_CAST")

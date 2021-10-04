@@ -13,4 +13,8 @@ fun provideDB(context: Context): ApplicationDatabase =
         ApplicationDatabase.DB_NAME
     ).build()
 
-fun provideLocationDao(database: ApplicationDatabase) = database.locationDao()
+fun provideLocationDao(database: ApplicationDatabase) = database.LocationDao()
+
+fun provideRestaurantDao(database: ApplicationDatabase) = database.RestaurantDao()
+
+fun provideFoodMenuBasketDao(database: ApplicationDatabase) = database.FoodMenuBasketDao()

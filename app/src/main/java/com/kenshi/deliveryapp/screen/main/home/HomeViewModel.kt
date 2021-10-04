@@ -5,14 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
 import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
+import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantFoodEntity
 import com.kenshi.deliveryapp.data.repository.map.MapRepository
+import com.kenshi.deliveryapp.data.repository.restaurant.food.RestaurantFoodRepository
 import com.kenshi.deliveryapp.data.repository.user.UserRepository
 import com.kenshi.deliveryapp.screen.base.BaseViewModel
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val mapRepository: MapRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val restaurantFoodRepository: RestaurantFoodRepository
 ): BaseViewModel() {
 
     companion object {
@@ -21,6 +24,8 @@ class HomeViewModel(
 
     //liveData 를 이용해서 State 를 관리
     val homeStateLiveData = MutableLiveData<HomeState>(HomeState.Uninitialized)
+
+    val foodMenuBasketLiveData = MutableLiveData<List<RestaurantFoodEntity>>()
 
     fun loadReverseGeoInfo(
         locationLatLngEntity: LocationLatLngEntity
@@ -53,4 +58,10 @@ class HomeViewModel(
         }
         return null
     }
+
+    fun checkMyBasket() = viewModelScope.launch {
+        foodMenuBasketLiveData.value = restaurantFoodRepository.getAllFoodMenuListInBasket()
+    }
+
+
 }

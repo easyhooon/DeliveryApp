@@ -1,12 +1,12 @@
 package com.kenshi.deliveryapp.screen.main.home.restaurant
 
 import android.util.Log
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
 import com.kenshi.deliveryapp.databinding.FragmentRestaurantListBinding
 import com.kenshi.deliveryapp.model.restaurant.RestaurantModel
 import com.kenshi.deliveryapp.screen.base.BaseFragment
+import com.kenshi.deliveryapp.screen.main.home.restaurant.detail.RestaurantDetailActivity
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import com.kenshi.deliveryapp.widget.adapter.ModelRecyclerAdapter
 import com.kenshi.deliveryapp.widget.adapter.listener.restaurant.RestaurantListListener
@@ -43,7 +43,12 @@ class RestaurantListFragment: BaseFragment<RestaurantListViewModel, FragmentRest
             resourcesProvider,
             adapterListener = object: RestaurantListListener{
                 override fun onClickItem(model: RestaurantModel) {
-                    Toast.makeText(requireContext(), "$model", Toast.LENGTH_SHORT).show()
+                    startActivity(
+                        RestaurantDetailActivity.newIntent(
+                            requireContext(),
+                            model.toEntity()
+                        )
+                    )
                 }
             })
     }
@@ -64,6 +69,7 @@ class RestaurantListFragment: BaseFragment<RestaurantListViewModel, FragmentRest
     companion object {
         const val RESTAURANT_CATEGORY_KEY = "restaurantCategory"
         const val LOCATION_KEY = "location"
+        const val RESTAURANT_KEY = "Restaurant"
 
         fun newInstance(
             restaurantCategory: RestaurantCategory,

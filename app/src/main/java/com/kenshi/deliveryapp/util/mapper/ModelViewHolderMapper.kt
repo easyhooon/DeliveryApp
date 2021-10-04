@@ -1,11 +1,11 @@
-package com.kenshi.deliveryapp.util.wrapper
+package com.kenshi.deliveryapp.util.mapper
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.ViewParent
-import androidx.recyclerview.widget.RecyclerView
 import com.kenshi.deliveryapp.databinding.ViewholderEmptyBinding
+import com.kenshi.deliveryapp.databinding.ViewholderFoodMenuBinding
 import com.kenshi.deliveryapp.databinding.ViewholderRestaurantBinding
+import com.kenshi.deliveryapp.databinding.ViewholderRestaurantReviewBinding
 import com.kenshi.deliveryapp.model.CellType
 import com.kenshi.deliveryapp.model.Model
 import com.kenshi.deliveryapp.screen.base.BaseViewModel
@@ -13,8 +13,11 @@ import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import com.kenshi.deliveryapp.widget.adapter.viewholder.EmptyViewHolder
 import com.kenshi.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 import com.kenshi.deliveryapp.widget.adapter.viewholder.RestaurantViewHolder
+import com.kenshi.deliveryapp.widget.adapter.viewholder.food.FoodMenuViewHolder
+import com.kenshi.deliveryapp.widget.adapter.viewholder.review.RestaurantReviewViewHolder
 
-object ModelViewHolderWrapper {
+//말 그대로 viewHolder 를 각 화면에 맞게 갈아 끼워주는 클래스
+object ModelViewHolderMapper {
 
     @Suppress("UNCHECKED_CAST")
     fun <M: Model> map(
@@ -32,7 +35,18 @@ object ModelViewHolderWrapper {
             )
             CellType.RESTAURANT_CELL -> RestaurantViewHolder(
                 ViewholderRestaurantBinding.inflate(inflater, parent, false),
-                    viewModel, resourcesProvider
+                viewModel,
+                resourcesProvider
+            )
+            CellType.FOOD_CELL -> FoodMenuViewHolder(
+                ViewholderFoodMenuBinding.inflate(inflater, parent, false),
+                viewModel,
+                resourcesProvider
+            )
+            CellType.REVIEW_CELL -> RestaurantReviewViewHolder(
+                ViewholderRestaurantReviewBinding.inflate(inflater, parent, false),
+                viewModel,
+                resourcesProvider
             )
         }
         return viewHolder as ModelViewHolder<M>

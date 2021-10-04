@@ -19,6 +19,7 @@ import com.kenshi.deliveryapp.databinding.FragmentHomeBinding
 import com.kenshi.deliveryapp.screen.base.BaseFragment
 import com.kenshi.deliveryapp.screen.main.home.restaurant.RestaurantCategory
 import com.kenshi.deliveryapp.screen.main.home.restaurant.RestaurantListFragment
+import com.kenshi.deliveryapp.screen.main.home.restaurant.RestaurantOrder
 import com.kenshi.deliveryapp.screen.mylocation.MyLocationActivity
 import com.kenshi.deliveryapp.widget.adapter.RestaurantListFragmentPagerAdapter
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -107,6 +108,36 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                 )
             }
         }
+
+        orderChipGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.chipDefault -> {
+                    chipInitialize.isGone = true
+                    changeRestaurantOrder(RestaurantOrder.DEFAULT)
+                }
+                R.id.chipInitialize -> {
+                    chipDefault.isChecked = true
+                }
+                R.id.chipDeliveryTip -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.LOW_DELIVERY_TIP)
+                }
+                R.id.chipFastDelivery -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.FAST_DELIVERY)
+                }
+                R.id.chipTopRate -> {
+                    chipInitialize.isVisible = true
+                    changeRestaurantOrder(RestaurantOrder.TOP_RATE)
+                }
+            }
+        }
+    }
+
+    private fun changeRestaurantOrder(order: RestaurantOrder) {
+        viewPagerAdapter.fragmentList.forEach {
+            it.viewModel.setRestaurantOrder(order)
+        }
     }
 
     //메인화면의 식당리스트는 뷰페이저 형태로 구성되어있는데 이 뷰페이저에 하나의 프래그먼트를 넣어서
@@ -114,6 +145,8 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding) {
 
         if(::viewPagerAdapter.isInitialized.not()){
+            //뷰페이저가 초기화되고 난 이후에 Chip group 을 보여줌
+            orderChipGroup.isVisible = true
             val restaurantCategories = RestaurantCategory.values()
             val restaurantListFragmentList = restaurantCategories.map{
                 //위치 변경 후 위치에 맞게 데이터를 다시 넘겨주는 로직
@@ -148,8 +181,14 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
-    //위치 권한을 가져와 데이터를 뿌려주는 작업 수행
+    override fun onResume() {
+        super.onResume()
+        //fetchData() 를 호출, 상태값에 대해서 갱신
+        //내 장바구니에 포함된 음식 수 체크
+        viewModel.checkMyBasket()
+    }
 
+    //위치 권한을 가져와 데이터를 뿌려주는 작업 수행
     override fun observeData() {
         viewModel.homeStateLiveData.observe(viewLifecycleOwner) {
             //fetch Data 시에 데이터를 받을 수 있도록 처리
@@ -188,6 +227,19 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     }
                     Toast.makeText(requireContext(), it.messageId, Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+
+        viewModel.foodMenuBasketLiveData.observe(this) {
+            if (it.isNotEmpty()) {
+                binding.basketButtonContainer.isVisible = true
+                binding.basketCountTextView.text = getString(R.string.basket_count, it.size)
+                binding.basketButton.setOnClickListener {
+                    //TODO 주문하기 화면으로 이동 or 로그인
+                }
+            } else {
+                binding.basketButtonContainer.isGone = true
+                binding.basketButton.setOnClickListener (null)
             }
         }
     }

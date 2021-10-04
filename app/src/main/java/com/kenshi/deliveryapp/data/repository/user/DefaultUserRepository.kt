@@ -1,7 +1,9 @@
 package com.kenshi.deliveryapp.data.repository.user
 
 import com.kenshi.deliveryapp.data.db.dao.LocationDao
+import com.kenshi.deliveryapp.data.db.dao.RestaurantDao
 import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
+import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
@@ -9,6 +11,7 @@ import kotlinx.coroutines.withContext
 //interface 라 ()가 없다
 class DefaultUserRepository(
     private val locationDao: LocationDao,
+    private val restaurantDao: RestaurantDao,
     private val ioDispatcher: CoroutineDispatcher
     ): UserRepository {
 
@@ -22,4 +25,21 @@ class DefaultUserRepository(
     ) = withContext(ioDispatcher) {
         locationDao.insert(locationLatLngEntity)
     }
+
+    override suspend fun getUserLikedRestaurant(restaurantTitle: String): RestaurantEntity? = withContext(ioDispatcher) {
+        restaurantDao.get(restaurantTitle)
+    }
+
+    override suspend fun insertUserLikedRestaurant(restaurantEntity: RestaurantEntity) = withContext(ioDispatcher) {
+        restaurantDao.insert(restaurantEntity)
+    }
+
+    override suspend fun deleteUserLikedRestaurant(restaurantTitle: String) = withContext(ioDispatcher) {
+        restaurantDao.delete(restaurantTitle)
+    }
+
+    override suspend fun deleteAllUserLikedRestaurant() = withContext(ioDispatcher) {
+        restaurantDao.deleteAll()
+    }
+
 }

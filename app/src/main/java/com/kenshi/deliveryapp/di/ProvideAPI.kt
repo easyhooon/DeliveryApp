@@ -1,5 +1,6 @@
 package com.kenshi.deliveryapp.di
 
+import com.kenshi.deliveryapp.data.network.FoodApiService
 import com.kenshi.deliveryapp.data.network.MapApiService
 import com.kenshi.deliveryapp.data.url.Url
 import okhttp3.OkHttpClient
@@ -13,6 +14,10 @@ fun provideMapApiService(retrofit: Retrofit): MapApiService {
     return retrofit.create(MapApiService::class.java)
 }
 
+fun provideFoodApiService(retrofit: Retrofit): FoodApiService {
+    return retrofit.create(FoodApiService::class.java)
+}
+
 //api 의 대한 연동
 fun provideMapRetrofit (
     okHttpClient: OkHttpClient,
@@ -23,6 +28,20 @@ fun provideMapRetrofit (
         .addConverterFactory(gsonConverterFactory)
         .client(okHttpClient)
         .build()
+}
+
+//retrofit 객체 생성
+fun provideFoodRetrofit(
+    okHttpClient: OkHttpClient,
+    gsonConverterFactory: GsonConverterFactory
+): Retrofit {
+    //Koin 의 namespace 를 이용
+    return Retrofit.Builder()
+        .baseUrl(Url.FOOD_URL)
+        .addConverterFactory(gsonConverterFactory)
+        .client(okHttpClient)
+        .build()
+
 }
 
 fun provideGsonConvertFactory(): GsonConverterFactory {

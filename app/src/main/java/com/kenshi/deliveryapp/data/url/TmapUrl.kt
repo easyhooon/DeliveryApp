@@ -11,5 +11,6 @@ object Url {
     //end point 3
     const val GET_TMAP_REVERSE_GEO_CODE = "/tmap/geo/reversegeocoding"
 
+    // 메뉴 리스트 mock api url
     const val FOOD_URL = "https://60abc8f15a4de40017ccae3e.mockapi.io/"
 }

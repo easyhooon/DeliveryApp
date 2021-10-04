@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "217683681289",
+    "project_id": "deliveryapp-5c514",
+    "storage_bucket": "deliveryapp-5c514.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217683681289:android:4c4ea4cfdb25b258e658d8",
+        "android_client_info": {
+          "package_name": "com.kenshi.deliveryapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "217683681289-skcpodcmfd2gh9kf58d4b027r9v7l5a5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kenshi.deliveryapp",
+            "certificate_hash": "2b9462c25ed804c496cf08cb26f5ef15677519fb"
+          }
+        },
+        {
+          "client_id": "217683681289-12m658ednftdj47fugqs6ps44c7s318s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqJAXzYeoARW7riac8zmVtkA9QrxDmEcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "217683681289-12m658ednftdj47fugqs6ps44c7s318s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

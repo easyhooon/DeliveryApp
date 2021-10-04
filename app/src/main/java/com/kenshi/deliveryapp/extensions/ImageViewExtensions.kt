@@ -1,7 +1,9 @@
 package com.kenshi.deliveryapp.extensions
 
+import android.graphics.Bitmap
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterInside
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -18,7 +20,7 @@ private val factory = DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(tru
 fun ImageView.clear() = Glide.with(context).clear(this)
 
 //fade in, fade out 애니메이션을 구현하기 위한
-fun ImageView.loadCenterInside(url: String, corner: Float = 0f) {
+fun ImageView.loadCenterInside(url: String, corner: Float = 0f,scaleType: Transformation<Bitmap> = CenterInside()) {
     Glide.with(this)
         .load(url)
         .transition(DrawableTransitionOptions.withCrossFade(factory))
