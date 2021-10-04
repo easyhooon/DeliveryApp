@@ -20,6 +20,7 @@ sealed class MyState {
     //Not Registered State 로 넘김
 
     sealed class Success: MyState() {
+
         data class Registered(
             val userName: String,
             val profileImageUri: Uri?
@@ -32,4 +33,5 @@ sealed class MyState {
         @StringRes val messageId: Int,
         val e: Throwable
     ): MyState()
+
 }

@@ -56,6 +56,7 @@ data class AddressInfo(
     val roadCode: String?
 ) {
     //변환 함수를 만듬
+    //LocationLatLngEntity 를 넘겨받음
     fun toSearchInfoEntity(
         locationLatLngEntity: LocationLatLngEntity
     ) = MapSearchInfoEntity(

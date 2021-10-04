@@ -1,6 +1,8 @@
 package com.kenshi.deliveryapp.screen.my
 
 import android.app.Activity
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -24,6 +26,7 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
     private val gso: GoogleSignInOptions by lazy {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
+//            .requestIdToken("217683681289-skcpodcmfd2gh9kf58d4b027r9v7l5a5.apps.googleusercontent.com")
             .requestEmail()
             .build()
     }
@@ -40,13 +43,13 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
             try {
                 //exception 대응
                 task.getResult(ApiException::class.java)?.let { account ->
-                    viewModel.saveToken(account.idToken ?:throw Exception())
-                }
+                    Log.e(TAG, "firebaseAuthWithGoogle: ${account.id}")
+                    viewModel.saveToken(account.idToken ?: throw Exception())
+                } ?: throw Exception()
             } catch (e:Exception) {
                 e.printStackTrace()
             }
         }
-
     }
 
     override fun initViews() = with(binding) {
@@ -65,8 +68,10 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
         loginLauncher.launch(signInIntent)
     }
 
-    override fun observeData() = viewModel.myStateLiveData.observe(viewLifecycleOwner) {
+    override fun observeData() = viewModel.myStateLiveData.observe(this) {
         when(it) {
+            is MyState.Uninitialized -> initViews()
+
             is MyState.Loading -> handleLoadingState()
 
             is MyState.Success -> handleSuccessState(it)
@@ -74,8 +79,6 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
             is MyState.Login -> handleLoginState(it)
 
             is MyState.Error -> handleErrorState(it)
-
-            else -> Unit
         }
     }
 
@@ -120,6 +123,7 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
     }
 
     private fun handleErrorState(state: MyState.Error) {
+        Toast.makeText(requireContext(), state.messageId, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

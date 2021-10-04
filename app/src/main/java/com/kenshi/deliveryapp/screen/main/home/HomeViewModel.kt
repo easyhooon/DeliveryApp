@@ -36,6 +36,7 @@ class HomeViewModel(
         val currentLocation = userLocation ?: locationLatLngEntity
 
         //현재 내 위치가 GPS 기반 위치가 일치하는지 확인하는 property
+        //mapRepository 라는 변수를 사용하려면 private val 선언을 해줘야 한다.
         val addressInfo = mapRepository.getReverseGeoInfo(currentLocation)
         //info 를 람다로 받음
         addressInfo?.let {  info ->
@@ -45,7 +46,7 @@ class HomeViewModel(
             )
         } ?: kotlin.run {
             homeStateLiveData.value = HomeState.Error(
-                R.string.can_not_load_address_info
+                messageId = R.string.can_not_load_address_info
             )
         }
     }

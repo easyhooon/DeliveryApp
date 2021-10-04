@@ -1,29 +1,22 @@
 package com.kenshi.deliveryapp.screen.main
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.databinding.ActivityMainBinding
+import com.kenshi.deliveryapp.screen.base.BaseActivity
 import com.kenshi.deliveryapp.screen.main.home.HomeFragment
 import com.kenshi.deliveryapp.screen.my.MyFragment
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(), BottomNavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var binding : ActivityMainBinding
+    override val viewModel by viewModel<MainViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun getViewBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        initViews()
-    }
-
-    private fun initViews() = with(binding){
+    override fun initViews() = with(binding){
         bottomNav.setOnNavigationItemSelectedListener(this@MainActivity)
         showFragment(HomeFragment.newInstance(), HomeFragment.TAG)
     }
@@ -60,4 +53,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 .commitAllowingStateLoss()
         }
     }
+
+    override fun observeData() = Unit
 }

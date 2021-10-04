@@ -7,11 +7,13 @@ import android.content.Context
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
 import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
@@ -34,9 +36,9 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
 
-        fun newInstance() = HomeFragment()
-
         const val TAG = "HomeFragment"
+
+        fun newInstance() = HomeFragment()
     }
 
 //    override val viewModel: HomeViewModel
@@ -44,6 +46,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     override fun getViewBinding(): FragmentHomeBinding = FragmentHomeBinding.inflate(layoutInflater)
 
+    //koin viewModel
     override val viewModel by viewModel<HomeViewModel>()
 
     private lateinit var locationManager: LocationManager
@@ -51,6 +54,8 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     private lateinit var myLocationListener: MyLocationListener
 
     private lateinit var viewPagerAdapter : RestaurantListFragmentPagerAdapter
+
+    private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
 
     //activity result 를 받아오기 위한 launcher
@@ -60,8 +65,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             if(result.resultCode == Activity.RESULT_OK){
                 //result 의 데이저 정보를 기반으로 검색한 정보를 가져옴
                 //위치를 한번 더 불러옴
-                result.data?.getParcelableExtra<MapSearchInfoEntity>(HomeViewModel.MY_LOCATION_KEY)
-                    ?.let { myLocationInfo ->
+                result.data?.getParcelableExtra<MapSearchInfoEntity>(HomeViewModel.MY_LOCATION_KEY)?.let { myLocationInfo ->
                     viewModel.loadReverseGeoInfo(myLocationInfo.locationLatLng)
                 }
             }
@@ -74,11 +78,11 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             //현재 받아온 permission 이 들어가 있는지 체크
             val responsePermissions = permissions.entries.filter {
                 //key, value 형태로 되어있는 거에 key 값이 있는지 체크
-                //value 를 통해 permission 이 unabled 되어있는지 검증(optional)
-                (it.key == Manifest.permission.ACCESS_FINE_LOCATION)
-                        || (it.key == Manifest.permission.ACCESS_COARSE_LOCATION)
+                //value 를 통해 permission 이 enabled 되어있는지 검증(optional)
+                it.key == Manifest.permission.ACCESS_FINE_LOCATION
+                        || it.key == Manifest.permission.ACCESS_COARSE_LOCATION
             }
-            if (responsePermissions.filter {it.value == true}.size == locationPermissions.size){
+            if (responsePermissions.filter { it.value == true }.size == locationPermissions.size) {
                 //권한이 부여됨 locationListener 등록
                 setMyLocationListener()
             } else {
@@ -140,52 +144,37 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
-    //메인화면의 식당리스트는 뷰페이저 형태로 구성되어있는데 이 뷰페이저에 하나의 프래그먼트를 넣어서
-    //식당 데이터를 mocking data 를 이용해서 불러옴
-    private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding) {
-
-        if(::viewPagerAdapter.isInitialized.not()){
-            //뷰페이저가 초기화되고 난 이후에 Chip group 을 보여줌
-            orderChipGroup.isVisible = true
-            val restaurantCategories = RestaurantCategory.values()
-            val restaurantListFragmentList = restaurantCategories.map{
-                //위치 변경 후 위치에 맞게 데이터를 다시 넘겨주는 로직
-                RestaurantListFragment.newInstance(it, locationLatLng)
-            }
-
-            viewPagerAdapter = RestaurantListFragmentPagerAdapter(
-                this@HomeFragment,
-                restaurantListFragmentList,
-                locationLatLng
-            )
-            //viewPager Fragment 에 장착
-            viewPager.adapter = viewPagerAdapter
-
-            //한번 만들어지면 매번 페이지가 바뀔때마다 프래그먼트를 다시 만드는 것이 아니라 계속 쓸 수 있도록
-            //위치가 바뀌면 api 다시 호출해주는 코드 필요
-            viewPager.offscreenPageLimit = restaurantCategories.size
-            //탭 레이아웃에 탭 들을 뿌려줄 수 있도록 구성
-            //콜백으로 tab, position 을 넘겨받을 수 있음
-            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                tab.setText(restaurantCategories[position].categoryNameId)
-            }.attach() //<- 빼먹는 거 주의
+    private fun getMyLocation() {
+        if (::locationManager.isInitialized.not()){
+            //컨텍스트에 접근
+            locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         }
-        if (locationLatLng != viewPagerAdapter.locationLatLngEntity) {
-            //다르면 새 값을 넣어줌
-            viewPagerAdapter.locationLatLngEntity = locationLatLng
-            viewPagerAdapter.fragmentList.forEach {
-                //위치 값이 변경이 되었다는 것을 viewModel에 알려줌
-                it.viewModel.setLocationLatLng(locationLatLng)
-
-            }
+        val isGpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        if(isGpsEnable) {
+            locationPermissionLauncher.launch(locationPermissions)
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        //fetchData() 를 호출, 상태값에 대해서 갱신
-        //내 장바구니에 포함된 음식 수 체크
-        viewModel.checkMyBasket()
+    //locationListener 등록 함수
+    //이미 permission 허용한 상태로 가정
+    @SuppressLint("MissingPermission")
+    private fun setMyLocationListener() {
+        val minTime = 1500L
+        val minDistance = 100f
+        if(::myLocationListener.isInitialized.not()){
+            myLocationListener = MyLocationListener()
+        }
+        with(locationManager) {
+            requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                minTime, minDistance,myLocationListener
+            )
+
+            requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                minTime,minDistance,myLocationListener
+            )
+        }
     }
 
     //위치 권한을 가져와 데이터를 뿌려주는 작업 수행
@@ -226,11 +215,12 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         getMyLocation()
                     }
                     Toast.makeText(requireContext(), it.messageId, Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, it.toString())
                 }
             }
         }
 
-        viewModel.foodMenuBasketLiveData.observe(this) {
+        viewModel.foodMenuBasketLiveData.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 binding.basketButtonContainer.isVisible = true
                 binding.basketCountTextView.text = getString(R.string.basket_count, it.size)
@@ -244,35 +234,49 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
         }
     }
 
-    private fun getMyLocation() {
-        if (::locationManager.isInitialized.not()){
-            //컨텍스트에 접근
-            locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        }
-        val isGpsUnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if(isGpsUnabled) {
-            locationPermissionLauncher.launch(locationPermissions)
-        }
+    override fun onResume() {
+        super.onResume()
+        //fetchData() 를 호출, 상태값에 대해서 갱신
+        //내 장바구니에 포함된 음식 수 체크
+        viewModel.checkMyBasket()
     }
 
-    //이미 permission 허용한 상태로 가정
-    @SuppressLint("MissingPermission")
-    private fun setMyLocationListener() {
-        val minTime = 1500L
-        val minDistance = 100f
-        if(::myLocationListener.isInitialized.not()){
-            myLocationListener = MyLocationListener()
-        }
-        with(locationManager) {
-            requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                minTime, minDistance,myLocationListener
-            )
+    //메인화면의 식당리스트는 뷰페이저 형태로 구성되어있는데 이 뷰페이저에 하나의 프래그먼트를 넣어서
+    //식당 데이터를 mocking data 를 이용해서 불러옴
+    private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding) {
+        orderChipGroup.isVisible = true
+        if(::viewPagerAdapter.isInitialized.not()){
+            //뷰페이저가 초기화되고 난 이후에 Chip group 을 보여줌
+            val restaurantCategories = RestaurantCategory.values()
+            val restaurantListFragmentList = restaurantCategories.map{
+                //위치 변경 후 위치에 맞게 데이터를 다시 넘겨주는 로직
+                RestaurantListFragment.newInstance(it, locationLatLng)
+            }
 
-            requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                minTime,minDistance,myLocationListener
+            viewPagerAdapter = RestaurantListFragmentPagerAdapter(
+                this@HomeFragment,
+                restaurantListFragmentList,
+                locationLatLng
             )
+            //viewPager Fragment 에 장착
+            viewPager.adapter = viewPagerAdapter
+
+            //한번 만들어지면 매번 페이지가 바뀔때마다 프래그먼트를 다시 만드는 것이 아니라 계속 쓸 수 있도록
+            //위치가 바뀌면 api 다시 호출해주는 코드 필요
+            viewPager.offscreenPageLimit = restaurantCategories.size
+            //탭 레이아웃에 탭 들을 뿌려줄 수 있도록 구성
+            //콜백으로 tab, position 을 넘겨받을 수 있음
+            TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+                tab.setText(restaurantCategories[position].categoryNameId)
+            }.attach() //<- 빼먹는 거 주의
+        }
+        if (locationLatLng != viewPagerAdapter.locationLatLngEntity) {
+            //다르면 새 값을 넣어줌
+            viewPagerAdapter.locationLatLngEntity = locationLatLng
+            viewPagerAdapter.fragmentList.forEach {
+                //위치 값이 변경이 되었다는 것을 viewModel 에 알려줌
+                it.viewModel.setLocationLatLng(locationLatLng)
+            }
         }
     }
 
@@ -285,7 +289,7 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     inner class MyLocationListener: LocationListener {
         override fun onLocationChanged(location: Location) {
             //binding.locationTitleTextView.text = "${location.latitude}, ${location.longitude}"
-            //Tmap API 를 이용하여 이위도, 경도 좌표를 리버스 지오코딩이라는 방법을 통해 위치 정보를 불러옴
+            //T map API 를 이용하여 이위도, 경도 좌표를 리버스 지오코딩이라는 방법을 통해 위치 정보를 불러옴
             viewModel.loadReverseGeoInfo(
                 LocationLatLngEntity(
                     location.latitude,

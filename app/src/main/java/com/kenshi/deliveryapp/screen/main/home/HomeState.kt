@@ -2,10 +2,12 @@ package com.kenshi.deliveryapp.screen.main.home
 
 import androidx.annotation.StringRes
 import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
+import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantFoodEntity
 
 //State Pattern by Sealed Class
 sealed class HomeState {
 
+    //property 가 없어도 되면 object type 으로
     object Uninitialized: HomeState()
 
     object Loading: HomeState()
@@ -15,10 +17,11 @@ sealed class HomeState {
     //data class 로 변경 예정
     data class Success(
         val mapSearchInfoEntity: MapSearchInfoEntity,
-        val isLocationSame: Boolean
+        val isLocationSame: Boolean,
+        val foodMenuListInBasket: List<RestaurantFoodEntity>? = null
     ): HomeState()
 
     data class Error(
         @StringRes val messageId: Int,
-    ):HomeState()
+    ): HomeState()
 }

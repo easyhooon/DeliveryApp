@@ -11,7 +11,7 @@ class AppPreferenceManager(
 ) {
 
     companion object {
-        const val PREFERENCES_NAME = "aop-part6-chapter-01-pref"
+        const val PREFERENCES_NAME = "DeliveryApp-pref"
         private const val DEFAULT_VALUE_STRING = ""
         private const val DEFAULT_VALUE_BOOLEAN = false
         private const val DEFAULT_VALUE_INT = -1

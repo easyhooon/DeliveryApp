@@ -12,6 +12,7 @@ class DefaultMapRepository(
     private val mapApiService: MapApiService,
     private val ioDispatcher: CoroutineDispatcher,
 ): MapRepository {
+
     override suspend fun getReverseGeoInfo(
         locationLatLngEntity: LocationLatLngEntity
     ): AddressInfo? = withContext(ioDispatcher) {
@@ -23,6 +24,7 @@ class DefaultMapRepository(
         if (response.isSuccessful) {
             response.body()?.addressInfo
         } else {
+            //실패
             null
         }
     }
