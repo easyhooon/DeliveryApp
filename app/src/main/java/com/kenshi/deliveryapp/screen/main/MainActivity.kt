@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         setContentView(binding.root)
 
         initViews()
-
     }
 
     private fun initViews() = with(binding){

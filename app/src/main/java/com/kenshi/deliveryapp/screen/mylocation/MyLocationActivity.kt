@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.google.android.gms.maps.*
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
