@@ -16,7 +16,7 @@ import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
 import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
 import com.kenshi.deliveryapp.databinding.ActivityMyLocationBinding
 import com.kenshi.deliveryapp.screen.base.BaseActivity
-import com.kenshi.deliveryapp.screen.main.home.HomeViewModel
+import com.kenshi.deliveryapp.screen.home.HomeViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -36,7 +36,7 @@ class MyLocationActivity: BaseActivity<MyLocationViewModel, ActivityMyLocationBi
 //    override val viewModel: MyLocationViewModel
 //        get() = TODO("Not yet implemented")
 
-    //Koin ViewModel 초기화 방법 3번째 꺼 import org.koin.android.viewmodel.ext.android.viewModel
+    //Koin ViewModel 초기화 방법 3번째 꺼 import org.koin.android.viewModel.ext.android.viewModel
     override val viewModel by viewModel<MyLocationViewModel> {
         //parameter 를 받아서 처리해주기 위해
         //myLocationViewModel 에서 해당 키 값을 기반으로 데이터를 가져옴
@@ -45,29 +45,28 @@ class MyLocationActivity: BaseActivity<MyLocationViewModel, ActivityMyLocationBi
         )
     }
 
-    override fun getViewBinding(): ActivityMyLocationBinding = ActivityMyLocationBinding.inflate(layoutInflater)
+    override fun getViewBinding() = ActivityMyLocationBinding.inflate(layoutInflater)
 
     private lateinit var map: GoogleMap
 
     private var isMapInitialized: Boolean = false
-
     private var isChangeLocation: Boolean = false
-
-    override fun onMapReady(map: GoogleMap?) {
-        this.map = map ?: return
-        viewModel.fetchData()
-    }
 
     //구글 맵에서 사용할 수 있는 뷰 객체를 초기화
     override fun initViews() = with(binding) {
         toolbar.setNavigationOnClickListener {
-            finish()
-            //onBackPressed
+//            finish()
+            onBackPressed()
         }
         confirmButton.setOnClickListener {
             viewModel.confirmSelectLocation()
         }
         setupGoogleMap()
+    }
+
+    override fun onMapReady(map: GoogleMap?) {
+        this.map = map ?: return
+        viewModel.fetchData()
     }
 
     private fun setupGoogleMap() {
@@ -76,27 +75,30 @@ class MyLocationActivity: BaseActivity<MyLocationViewModel, ActivityMyLocationBi
     }
 
     //state 기반으로 data 를 적용
-    override fun observeData() = viewModel.myLocationStateLiveData.observe(this) {
-        when(it) {
-            is MyLocationState.Loading -> {
-                handleLoadingState()
-            }
-            is MyLocationState.Success -> {
-                if(::map.isInitialized) {
-                    handleSuccessState(it)
+    override fun observeData() {
+        viewModel.myLocationStateLiveData.observe(this) {
+
+            when (it) {
+                is MyLocationState.Loading -> {
+                    handleLoadingState()
                 }
+                is MyLocationState.Success -> {
+                    if (::map.isInitialized) {
+                        handleSuccessState(it)
+                    }
+                }
+                is MyLocationState.Confirm -> {
+                    //위치를 바꾼 후 confirm button 을 누르면 confirm 상태로 변함(종료)
+                    setResult(Activity.RESULT_OK, Intent().apply {
+                        putExtra(HomeViewModel.MY_LOCATION_KEY, it.mapSearchInfoEntity)
+                    })
+                    finish()
+                }
+                is MyLocationState.Error -> {
+                    Toast.makeText(this, it.messageId, Toast.LENGTH_SHORT).show()
+                }
+                else -> Unit
             }
-            is MyLocationState.Confirm -> {
-                //위치를 바꾼 후 confirm button 을 누르면 confirm 상태로 변함(종료)
-                setResult(Activity.RESULT_OK, Intent().apply {
-                    putExtra(HomeViewModel.MY_LOCATION_KEY, it.mapSearchInfoEntity)
-                })
-                finish()
-            }
-            is MyLocationState.Error -> {
-                Toast.makeText(this, it.messageId, Toast.LENGTH_SHORT).show()
-            }
-            else -> Unit
         }
     }
 

@@ -3,7 +3,7 @@ package com.kenshi.deliveryapp.model.restaurant
 import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantEntity
 import com.kenshi.deliveryapp.model.CellType
 import com.kenshi.deliveryapp.model.Model
-import com.kenshi.deliveryapp.screen.main.home.restaurant.RestaurantCategory
+import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantCategory
 
 data class RestaurantModel (
     override val id: Long,

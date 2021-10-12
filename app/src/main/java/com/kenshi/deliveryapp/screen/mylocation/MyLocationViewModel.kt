@@ -59,8 +59,6 @@ class MyLocationViewModel(
                 myLocationStateLiveData.value = MyLocationState.Confirm(
                     data.mapSearchInfoEntity
                 )
-
-
            }
         }
     }

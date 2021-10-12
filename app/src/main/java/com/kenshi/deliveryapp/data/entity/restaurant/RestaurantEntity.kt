@@ -4,7 +4,7 @@ import android.os.Parcelable
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.kenshi.deliveryapp.data.entity.Entity
-import com.kenshi.deliveryapp.screen.main.home.restaurant.RestaurantCategory
+import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantCategory
 import com.kenshi.deliveryapp.util.converter.RoomTypeConverters
 import kotlinx.parcelize.Parcelize
 

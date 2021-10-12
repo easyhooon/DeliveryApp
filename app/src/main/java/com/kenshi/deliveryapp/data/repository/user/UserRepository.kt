@@ -16,6 +16,8 @@ interface UserRepository {
     //title 에 해당하는 entity 가 저장안되어있을 수 있기 때문에
     suspend fun getUserLikedRestaurant(restaurantTitle: String): RestaurantEntity?
 
+    suspend fun getAllUserLikedRestaurantList(): List<RestaurantEntity>
+
     suspend fun insertUserLikedRestaurant(restaurantEntity: RestaurantEntity)
 
     suspend fun deleteUserLikedRestaurant(restaurantTitle: String)

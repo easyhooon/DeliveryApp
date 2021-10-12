@@ -1,5 +1,9 @@
 package com.kenshi.deliveryapp.di
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
 import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
 import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantEntity
@@ -7,6 +11,8 @@ import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantFoodEntity
 import com.kenshi.deliveryapp.data.preference.AppPreferenceManager
 import com.kenshi.deliveryapp.data.repository.map.DefaultMapRepository
 import com.kenshi.deliveryapp.data.repository.map.MapRepository
+import com.kenshi.deliveryapp.data.repository.order.DefaultOrderRepository
+import com.kenshi.deliveryapp.data.repository.order.OrderRepository
 import com.kenshi.deliveryapp.data.repository.restaurant.DefaultRestaurantRepository
 import com.kenshi.deliveryapp.data.repository.restaurant.RestaurantRepository
 import com.kenshi.deliveryapp.data.repository.restaurant.food.DefaultRestaurantFoodRepository
@@ -15,15 +21,18 @@ import com.kenshi.deliveryapp.data.repository.restaurant.review.DefaultRestauran
 import com.kenshi.deliveryapp.data.repository.restaurant.review.RestaurantReviewRepository
 import com.kenshi.deliveryapp.data.repository.user.DefaultUserRepository
 import com.kenshi.deliveryapp.data.repository.user.UserRepository
-import com.kenshi.deliveryapp.screen.main.home.HomeViewModel
-import com.kenshi.deliveryapp.screen.main.home.restaurant.RestaurantCategory
-import com.kenshi.deliveryapp.screen.main.home.restaurant.RestaurantListViewModel
-import com.kenshi.deliveryapp.screen.main.home.restaurant.detail.RestaurantDetailViewModel
-import com.kenshi.deliveryapp.screen.main.home.restaurant.detail.menu.RestaurantMenuListViewModel
-import com.kenshi.deliveryapp.screen.main.home.restaurant.detail.review.RestaurantReviewListViewModel
+import com.kenshi.deliveryapp.screen.home.HomeViewModel
+import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantCategory
+import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantListViewModel
+import com.kenshi.deliveryapp.screen.home.restaurant.detail.RestaurantDetailViewModel
+import com.kenshi.deliveryapp.screen.home.restaurant.detail.menu.RestaurantMenuListViewModel
+import com.kenshi.deliveryapp.screen.home.restaurant.detail.review.RestaurantReviewListViewModel
+import com.kenshi.deliveryapp.screen.like.RestaurantLikeListViewModel
 import com.kenshi.deliveryapp.screen.main.MainViewModel
 import com.kenshi.deliveryapp.screen.my.MyViewModel
 import com.kenshi.deliveryapp.screen.mylocation.MyLocationViewModel
+import com.kenshi.deliveryapp.screen.order.OrderMenuListViewModel
+import com.kenshi.deliveryapp.util.event.MenuChangeEventBus
 import com.kenshi.deliveryapp.util.provider.DefaultResourcesProvider
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import kotlinx.coroutines.Dispatchers
@@ -40,14 +49,11 @@ val appModule = module {
     //AppModule 내에 각각의 뷰모델을 추가시켜주지 않으면(하나라도 주입하지 않으면) 에러 발생함
     viewModel { MainViewModel() }
     viewModel { HomeViewModel(get(), get() , get()) }
-    viewModel { MyViewModel(get()) }
+    viewModel { MyViewModel(get(), get(), get()) }
+    viewModel { RestaurantLikeListViewModel(get()) }
 
     //restaurantCategory 를 필요로 하기 때문에 람다로 넘겨줌
     //constructor 를 통해 restaurant 카테고리를 다음과 같이 구성
-//    viewModel { (restaurantCategory: RestaurantCategory, locationLatLng: LocationLatLngEntity) ->
-//        RestaurantListViewModel(restaurantCategory, locationLatLng, get(), )
-//    }
-
     factory { (restaurantCategory: RestaurantCategory, locationLatLng: LocationLatLngEntity) ->
         RestaurantListViewModel(restaurantCategory, locationLatLng, get())
     }
@@ -64,6 +70,8 @@ val appModule = module {
 
     viewModel { (restaurantTitle: String) -> RestaurantReviewListViewModel(restaurantTitle, get()) }
 
+    viewModel { OrderMenuListViewModel(get(), get())}
+
 
     // < > <-- 반환 타입
     //두 개의 값(파라미터) 주입
@@ -71,7 +79,8 @@ val appModule = module {
     single<MapRepository> {DefaultMapRepository(get(), get())}
     single<UserRepository> {DefaultUserRepository(get(), get(),get())}
     single<RestaurantFoodRepository> {DefaultRestaurantFoodRepository(get(), get(), get())}
-    single<RestaurantReviewRepository> {DefaultRestaurantReviewRepository(get())}
+    single<RestaurantReviewRepository> {DefaultRestaurantReviewRepository(get(), get())}
+    single<OrderRepository> { DefaultOrderRepository(get(), get()) }
 
     single() { provideGsonConvertFactory()}
     single() { buildOkHttpClient() }
@@ -96,4 +105,10 @@ val appModule = module {
 
     single { Dispatchers.IO}
     single { Dispatchers.Main}
+
+    single { MenuChangeEventBus() }
+
+    single { Firebase.firestore }
+    single { FirebaseAuth.getInstance() }
+    single { FirebaseStorage.getInstance() }
 }

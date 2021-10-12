@@ -6,10 +6,10 @@
         android:icon="@drawable/ic_home"
         android:title="@string/home" />
 
-<!--    <item-->
-<!--        android:id="@+id/menu_like"-->
-<!--        android:icon="@drawable/ic_heart_disable"-->
-<!--        android:title="@string/liked" />-->
+    <item
+        android:id="@+id/menu_like"
+        android:icon="@drawable/ic_heart_disable"
+        android:title="@string/like" />
 
     <item
         android:id="@+id/menu_my"

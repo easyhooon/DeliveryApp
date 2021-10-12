@@ -4,7 +4,7 @@ import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantFoodEntity
 
 interface RestaurantFoodRepository {
 
-    suspend fun getFoods(restaurantId: Long): List<RestaurantFoodEntity>
+    suspend fun getFoods(restaurantId: Long, restaurantTitle: String): List<RestaurantFoodEntity>
 
     suspend fun getAllFoodMenuListInBasket(): List<RestaurantFoodEntity>
 

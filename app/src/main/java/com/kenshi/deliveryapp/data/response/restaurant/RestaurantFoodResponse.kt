@@ -9,16 +9,16 @@ data class RestaurantFoodResponse(
     val description: String,
     val price: Int,
     val imageUrl: String,
-    val restaurantId: Long
+    //val restaurantId: Long
 ) {
     //parsing 해서 entity 형태로 바꿔줌
-    fun toEntity(restaurantId: Long) = RestaurantFoodEntity(
-        id,
-        title,
-        description,
-        price.toDouble().toInt(),
-        imageUrl,
-        restaurantId
-
+    fun toEntity(restaurantId: Long, restaurantTitle: String) = RestaurantFoodEntity(
+        id = id,
+        title = title,
+        description = description,
+        price = price.toDouble().toInt(),
+        imageUrl = imageUrl,
+        restaurantId = restaurantId,
+        restaurantTitle = restaurantTitle
     )
 }

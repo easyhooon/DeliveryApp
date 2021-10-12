@@ -13,18 +13,32 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.databinding.FragmentMyBinding
-import com.kenshi.deliveryapp.extensions.loadCenterInside
+import com.kenshi.deliveryapp.extensions.load
+import com.kenshi.deliveryapp.model.order.OrderModel
 import com.kenshi.deliveryapp.screen.base.BaseFragment
+import com.kenshi.deliveryapp.screen.review.AddRestaurantReviewActivity
+import com.kenshi.deliveryapp.util.provider.ResourcesProvider
+import com.kenshi.deliveryapp.widget.adapter.ModelRecyclerAdapter
+import com.kenshi.deliveryapp.widget.adapter.listener.order.OrderListListener
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
+
+    companion object {
+
+        fun newInstance() = MyFragment()
+
+        const val TAG = "MyFragment"
+    }
 
     override val viewModel by viewModel<MyViewModel>()
 
     override fun getViewBinding(): FragmentMyBinding = FragmentMyBinding.inflate(layoutInflater)
 
     private val gso: GoogleSignInOptions by lazy {
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+        //DEFAULT_GAME_SIGN_IN 으로 자동완성해서 찾는데 시간 오래걸림 ㅠㅠ
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
 //            .requestIdToken("217683681289-skcpodcmfd2gh9kf58d4b027r9v7l5a5.apps.googleusercontent.com")
             .requestEmail()
@@ -37,6 +51,7 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
     //firebase auth 객체 관리
     private val firebaseAuth by lazy { FirebaseAuth.getInstance() }
 
+    //startActivityForResult 대체
     private val loginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -52,6 +67,22 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
         }
     }
 
+    private val resourcesProvider by inject<ResourcesProvider>()
+
+    private val adapter by lazy {
+        ModelRecyclerAdapter<OrderModel,
+                MyViewModel>(listOf(),
+            viewModel, resourcesProvider,
+            object: OrderListListener {
+
+            override fun writeRestaurantReview(orderId: String, restaurantTitle: String) {
+                startActivity(
+                    AddRestaurantReviewActivity.newIntent(requireContext(), orderId, restaurantTitle)
+                )
+            }
+        })
+    }
+
     override fun initViews() = with(binding) {
         loginButton.setOnClickListener {
             signInGoogle()
@@ -60,6 +91,11 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
             firebaseAuth.signOut()
             viewModel.signOut()
         }
+        recyclerView.adapter = adapter
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun signInGoogle() {
@@ -74,9 +110,9 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
 
             is MyState.Loading -> handleLoadingState()
 
-            is MyState.Success -> handleSuccessState(it)
-
             is MyState.Login -> handleLoginState(it)
+
+            is MyState.Success -> handleSuccessState(it)
 
             is MyState.Error -> handleErrorState(it)
         }
@@ -100,12 +136,6 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
         }
     }
 
-    private fun handleRegisteredState(state: MyState.Success.Registered) = with(binding) {
-        profileGroup.isVisible = true
-        loginRequiredGroup.isGone = true
-        profileImageView.loadCenterInside(state.profileImageUri.toString(), 60f)
-        userNameTextView.text = state.userName
-    }
     private fun handleLoginState(state: MyState.Login) {
         binding.progressBar.isVisible = true
         val credential = GoogleAuthProvider.getCredential(state.idToken, null)
@@ -119,18 +149,20 @@ class MyFragment: BaseFragment<MyViewModel, FragmentMyBinding>() {
                     viewModel.setUserInfo(null)
                 }
             }
+    }
+
+    private fun handleRegisteredState(state: MyState.Success.Registered) = with(binding) {
+        profileGroup.isVisible = true
+        loginRequiredGroup.isGone = true
+        profileImageView.load(state.profileImageUri.toString(), 60f)
+        userNameTextView.text = state.userName
+        //Toast.makeText(requireContext(), state.orderList.toString(), Toast.LENGTH_SHORT).show()
+        adapter.submitList(state.orderList)
 
     }
 
     private fun handleErrorState(state: MyState.Error) {
         Toast.makeText(requireContext(), state.messageId, Toast.LENGTH_SHORT).show()
-    }
-
-    companion object {
-
-        fun newInstance() = MyFragment()
-
-        const val TAG = "MyFragment"
     }
 
 }

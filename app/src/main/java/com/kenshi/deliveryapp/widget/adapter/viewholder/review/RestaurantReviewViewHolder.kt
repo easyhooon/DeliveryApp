@@ -5,7 +5,7 @@ import androidx.core.view.isVisible
 import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.databinding.ViewholderRestaurantReviewBinding
 import com.kenshi.deliveryapp.extensions.clear
-import com.kenshi.deliveryapp.extensions.loadCenterInside
+import com.kenshi.deliveryapp.extensions.load
 import com.kenshi.deliveryapp.model.restaurant.RestaurantModel
 import com.kenshi.deliveryapp.model.restaurant.review.RestaurantReviewModel
 import com.kenshi.deliveryapp.screen.base.BaseViewModel
@@ -30,7 +30,7 @@ class RestaurantReviewViewHolder(
         with(binding) {
             if(model.thumbnailImageUri != null) {
                 reviewThumbnailImage.isVisible = true
-                reviewThumbnailImage.loadCenterInside(model.thumbnailImageUri.toString(), 24f)
+                reviewThumbnailImage.load(model.thumbnailImageUri.toString())
             } else {
                 reviewThumbnailImage.isGone = true
             }
@@ -38,7 +38,7 @@ class RestaurantReviewViewHolder(
             reviewTitleText.text = model.title
             reviewText.text = model.description
 
-            ratingBar.rating = model.grade.toFloat()
+            ratingBar.rating = model.grade
         }
     }
 

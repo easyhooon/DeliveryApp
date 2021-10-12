@@ -13,8 +13,8 @@ data class FoodModel(
     val price: Int,
     val imageUrl: String,
     val restaurantId: Long,
-    val foodId: String
-
+    val foodId: String,
+    val restaurantTitle: String
 ): Model(id, type) {
     //식당 상세화면에서의 FoodEntity
     //고유의 foodEntity 의 ID 값을 넣어주기 위한 함수
@@ -25,6 +25,7 @@ data class FoodModel(
         description,
         price,
         imageUrl,
-        restaurantId
+        restaurantId,
+        restaurantTitle
     )
 }
