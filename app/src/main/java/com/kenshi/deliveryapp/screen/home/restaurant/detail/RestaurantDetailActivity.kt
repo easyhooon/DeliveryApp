@@ -22,7 +22,6 @@ import com.kenshi.deliveryapp.screen.base.BaseActivity
 import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantListFragment
 import com.kenshi.deliveryapp.screen.home.restaurant.detail.menu.RestaurantMenuListFragment
 import com.kenshi.deliveryapp.screen.home.restaurant.detail.review.RestaurantReviewListFragment
-import com.kenshi.deliveryapp.screen.main.MainActivity
 import com.kenshi.deliveryapp.screen.main.MainTabMenu
 import com.kenshi.deliveryapp.screen.order.OrderMenuListActivity
 import com.kenshi.deliveryapp.util.event.MenuChangeEventBus

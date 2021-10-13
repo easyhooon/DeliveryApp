@@ -51,18 +51,19 @@ class HomeViewModel(
         }
     }
 
+    //저번에 받아놨었던 데이터가 있는지 판별
     fun getMapSearchInfo(): MapSearchInfoEntity? {
         when(val data = homeStateLiveData.value){
+            //Success 여야만 한다.
             is HomeState.Success -> {
                 return data.mapSearchInfoEntity
             }
         }
+        //Success가 아닌 경우
         return null
     }
 
     fun checkMyBasket() = viewModelScope.launch {
         foodMenuBasketLiveData.value = restaurantFoodRepository.getAllFoodMenuListInBasket()
     }
-
-
 }

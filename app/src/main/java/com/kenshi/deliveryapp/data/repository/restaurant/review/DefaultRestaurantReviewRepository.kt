@@ -1,7 +1,7 @@
 package com.kenshi.deliveryapp.data.repository.restaurant.review
 
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kenshi.deliveryapp.data.entity.ReviewEntity
+import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantReviewEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -35,16 +35,16 @@ class DefaultRestaurantReviewRepository(
                     //coroutine 으로 가져옴
                 .await()
             Result.Success(snapshot.documents.map {
-                ReviewEntity(
+                RestaurantReviewEntity(
                     userId = it.get("userId") as String,
                     title = it.get("title") as String,
                     createdAt = it.get("createdAt") as Long,
                     content = it.get("content") as String,
-                    rating = (it.get("content") as Double).toFloat(),
+                    rating = (it.get("rating") as Double).toFloat(),
                     //사진은 없을 수 있기 때문에
                     imageUrlList = it.get("imageUrlList") as? List<String>,
                     orderId = it.get("orderId") as String,
-                    restaurantTitle = it.get("orderId") as String
+                    restaurantTitle = it.get("restaurantTitle") as String
                 )
             })
         } catch (e: Exception) {

@@ -1,6 +1,6 @@
-package com.kenshi.deliveryapp.data.entity
+package com.kenshi.deliveryapp.data.entity.restaurant
 
-data class ReviewEntity(
+data class RestaurantReviewEntity(
     val userId: String,
     val title: String,
     val createdAt: Long,

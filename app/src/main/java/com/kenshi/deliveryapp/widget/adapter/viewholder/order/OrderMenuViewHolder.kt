@@ -2,7 +2,6 @@ package com.kenshi.deliveryapp.widget.adapter.viewholder.order
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.kenshi.deliveryapp.R
-import com.kenshi.deliveryapp.databinding.ViewholderFoodMenuBinding
 import com.kenshi.deliveryapp.databinding.ViewholderOrderMenuBinding
 import com.kenshi.deliveryapp.extensions.clear
 import com.kenshi.deliveryapp.extensions.load
@@ -11,7 +10,6 @@ import com.kenshi.deliveryapp.screen.base.BaseViewModel
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import com.kenshi.deliveryapp.widget.adapter.listener.AdapterListener
 import com.kenshi.deliveryapp.widget.adapter.listener.order.OrderMenuListListener
-import com.kenshi.deliveryapp.widget.adapter.listener.restaurant.FoodMenuListListener
 import com.kenshi.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 
 class OrderMenuViewHolder(

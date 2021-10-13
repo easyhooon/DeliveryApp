@@ -2,6 +2,7 @@ package com.kenshi.deliveryapp.screen.order
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -41,9 +42,11 @@ class OrderMenuListActivity : BaseActivity<OrderMenuListViewModel, ActivityOrder
 
         confirmButton.setOnClickListener {
             viewModel.orderMenu()
+            Log.d("주문완료", "주문을 완료하였습니다")
         }
         orderClearButton.setOnClickListener{
             viewModel.clearOrderMenu()
+            Log.d("주문취소", "주문을 취소하였습니다")
         }
     }
 

@@ -1,6 +1,5 @@
 package com.kenshi.deliveryapp.data.network
 
-
 import com.kenshi.deliveryapp.data.response.address.AddressInfoResponse
 import com.kenshi.deliveryapp.data.response.search.SearchResponse
 import com.kenshi.deliveryapp.data.url.Key

@@ -3,7 +3,7 @@ package com.kenshi.deliveryapp.screen.home.restaurant.detail.review
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.kenshi.deliveryapp.data.entity.ReviewEntity
+import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantReviewEntity
 import com.kenshi.deliveryapp.data.repository.restaurant.review.DefaultRestaurantReviewRepository
 import com.kenshi.deliveryapp.data.repository.restaurant.review.RestaurantReviewRepository
 import com.kenshi.deliveryapp.model.restaurant.review.RestaurantReviewModel
@@ -26,7 +26,7 @@ class RestaurantReviewListViewModel(
 
         when(result) {
             is DefaultRestaurantReviewRepository.Result.Success<*> -> {
-                val reviews = result.data as List<ReviewEntity>
+                val reviews = result.data as List<RestaurantReviewEntity>
                 reviewStateLiveData.value = RestaurantReviewState.Success(
                     reviews.map{
                         RestaurantReviewModel (

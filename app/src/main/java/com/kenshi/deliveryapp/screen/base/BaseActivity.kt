@@ -3,7 +3,6 @@ package com.kenshi.deliveryapp.screen.base
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.viewbinding.ViewBinding
-import com.kenshi.deliveryapp.R
 import kotlinx.coroutines.Job
 
 //base 의 경우 되도록이면 abstract 하게

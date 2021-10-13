@@ -15,7 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.kenshi.deliveryapp.data.entity.ReviewEntity
+import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantReviewEntity
 import com.kenshi.deliveryapp.databinding.ActivityAddRestaurantReviewBinding
 import com.kenshi.deliveryapp.screen.review.camera.CameraActivity
 import com.kenshi.deliveryapp.screen.review.gallery.GalleryActivity
@@ -144,7 +144,7 @@ class AddRestaurantReviewActivity : AppCompatActivity() {
     }
 
     private fun uploadArticle(userId: String, title: String, content: String, rating: Float, imageUrlList: List<String>) {
-        val reviewEntity = ReviewEntity(userId, title, System.currentTimeMillis(), content, rating, imageUrlList, orderId, restaurantTitle)
+        val reviewEntity = RestaurantReviewEntity(userId, title, System.currentTimeMillis(), content, rating, imageUrlList, orderId, restaurantTitle)
         firestore
             .collection("review")
             .add(reviewEntity)

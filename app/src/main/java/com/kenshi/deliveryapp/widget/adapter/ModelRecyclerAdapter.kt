@@ -8,7 +8,6 @@ import com.kenshi.deliveryapp.screen.base.BaseViewModel
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import com.kenshi.deliveryapp.util.mapper.ModelViewHolderMapper
 import com.kenshi.deliveryapp.widget.adapter.listener.AdapterListener
-import com.kenshi.deliveryapp.widget.adapter.listener.restaurant.RestaurantListListener
 import com.kenshi.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 
 

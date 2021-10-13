@@ -2,16 +2,13 @@ package com.kenshi.deliveryapp.widget.adapter.viewholder.review
 
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.databinding.ViewholderRestaurantReviewBinding
 import com.kenshi.deliveryapp.extensions.clear
 import com.kenshi.deliveryapp.extensions.load
-import com.kenshi.deliveryapp.model.restaurant.RestaurantModel
 import com.kenshi.deliveryapp.model.restaurant.review.RestaurantReviewModel
 import com.kenshi.deliveryapp.screen.base.BaseViewModel
 import com.kenshi.deliveryapp.util.provider.ResourcesProvider
 import com.kenshi.deliveryapp.widget.adapter.listener.AdapterListener
-import com.kenshi.deliveryapp.widget.adapter.listener.restaurant.RestaurantListListener
 import com.kenshi.deliveryapp.widget.adapter.viewholder.ModelViewHolder
 
 class RestaurantReviewViewHolder(

@@ -20,7 +20,6 @@ import com.kenshi.deliveryapp.data.entity.location.LocationLatLngEntity
 import com.kenshi.deliveryapp.data.entity.location.MapSearchInfoEntity
 import com.kenshi.deliveryapp.databinding.FragmentHomeBinding
 import com.kenshi.deliveryapp.screen.base.BaseFragment
-import com.kenshi.deliveryapp.screen.home.HomeViewModel.Companion.MY_LOCATION_KEY
 import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantCategory
 import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantListFragment
 import com.kenshi.deliveryapp.screen.home.restaurant.RestaurantOrder
@@ -70,12 +69,13 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
             if(result.resultCode == Activity.RESULT_OK){
                 //result 의 데이저 정보를 기반으로 검색한 정보를 가져옴
                 //위치를 한번 더 불러옴
-                result.data?.getParcelableExtra<MapSearchInfoEntity>(MY_LOCATION_KEY)?.let { myLocationInfo ->
+                result.data?.getParcelableExtra<MapSearchInfoEntity>(HomeViewModel.MY_LOCATION_KEY)?.let { myLocationInfo ->
                     viewModel.loadReverseGeoInfo(myLocationInfo.locationLatLng)
                 }
             }
         }
 
+    //Permission 에 대해서 받아오는 launcher
     //androidx 에서 requestCode 에 대해서 deprecated 되었기 때문에
     //registerForActivityResult 를 사용하기 위한 용도
     private val locationPermissionLauncher =
@@ -88,10 +88,12 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                         || it.key == Manifest.permission.ACCESS_COARSE_LOCATION
             }
             if (responsePermissions.filter { it.value == true }.size == locationPermissions.size) {
-                //권한이 부여됨 locationListener 등록
+                //권한이 부여됨
+                // locationListener 등록
                 setMyLocationListener()
             } else {
-                //위치 권한 필요
+                // 권한 설정 되지 않음
+                // 위치 권한 필요
                 with(binding.locationTitleTextView) {
                     text = getString(R.string.please_request_location_permission)
                     setOnClickListener{
@@ -152,9 +154,12 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
 
     private fun getMyLocation() {
         if (::locationManager.isInitialized.not()){
-            //컨텍스트에 접근
+            //LocationManager 가 초기화 되어있지 않으면,
+            // 컨텍스트에 접근하여 getSystemService 로 Location Service 를 가져온 뒤에 locationManger 로 캐스팅
             locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         }
+        // locationManager 가 초기화 되었으면 GPS 가 켜져있는 것을 확인
+        // 켜져 있으면, Permission 에 대한 권한 체크를 할 수 있는 launcher를 실행
         val isGpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         if(isGpsEnable) {
             locationPermissionLauncher.launch(locationPermissions)
@@ -165,8 +170,9 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     //이미 permission 허용한 상태로 가정
     @SuppressLint("MissingPermission")
     private fun setMyLocationListener() {
-        val minTime = 1500L
-        val minDistance = 100f
+        val minTime = 1500L //1.5초
+        val minDistance = 100f //최소 거리 100 미터
+
         if(::myLocationListener.isInitialized.not()){
             myLocationListener = MyLocationListener()
         }
@@ -212,16 +218,19 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
                     if (it.isLocationSame.not()) {
                         Toast.makeText(requireContext(), R.string.please_set_your_current_location, Toast.LENGTH_SHORT).show()
                     }
+                    Log.d(TAG, "현재 위치는 ${binding.locationTitleTextView.text} 입니다.")
                 }
                 is HomeState.Error -> {
                     binding.locationLoading.isGone = true
                     binding.locationTitleTextView.setText(R.string.location_not_found)
-                    binding.locationTitleTextView.setOnClickListener {
-                        getMyLocation()
-                    }
+
+                    //이게 문제였다
+                    //에러 상태일때만 해당 클릭리스너가 달리므로 클릭리스너가 중복으로 달려있는 것이 아니다. 케이스마다 다르게 존재하는 것
+                    //binding.locationTitleTextView.setOnClickListener {
+                    //        getMyLocation()
+                    //}
                     Toast.makeText(requireContext(), it.messageId, Toast.LENGTH_SHORT).show()
-                    Log.e(TAG, it.messageId.toString() )
-                    Log.e(TAG, it.toString())
+                    Log.e(TAG, it.messageId.toString())
                 }
                 else -> Unit
             }
@@ -276,9 +285,10 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     //식당 데이터를 mocking data 를 이용해서 불러옴
     private fun initViewPager(locationLatLng: LocationLatLngEntity) = with(binding) {
         orderChipGroup.isVisible = true
+        val restaurantCategories = RestaurantCategory.values()
+
         if(::viewPagerAdapter.isInitialized.not()){
             //뷰페이저가 초기화되고 난 이후에 Chip group 을 보여줌
-            val restaurantCategories = RestaurantCategory.values()
             val restaurantListFragmentList = restaurantCategories.map{
                 //위치 변경 후 위치에 맞게 데이터를 다시 넘겨주는 로직
                 RestaurantListFragment.newInstance(it, locationLatLng)
@@ -320,8 +330,9 @@ class HomeFragment: BaseFragment<HomeViewModel, FragmentHomeBinding>() {
     inner class MyLocationListener: LocationListener {
 
         override fun onLocationChanged(location: Location) {
-            //binding.locationTitleTextView.text = "${location.latitude}, ${location.longitude}"
+//            binding.locationTitleTextView.text = "${location.latitude}, ${location.longitude}"
             //T map API 를 이용하여 이위도, 경도 좌표를 리버스 지오코딩이라는 방법을 통해 위치 정보를 불러옴
+            Log.d(TAG, "MyLocation = ${location.latitude}, ${location.longitude}")
             viewModel.loadReverseGeoInfo(
                 LocationLatLngEntity(
                     location.latitude,

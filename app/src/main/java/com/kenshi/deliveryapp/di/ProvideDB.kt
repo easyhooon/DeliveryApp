@@ -1,6 +1,5 @@
 package com.kenshi.deliveryapp.di
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.kenshi.deliveryapp.data.db.ApplicationDatabase

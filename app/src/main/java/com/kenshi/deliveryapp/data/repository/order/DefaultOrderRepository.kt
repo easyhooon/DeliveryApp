@@ -13,6 +13,19 @@ class DefaultOrderRepository(
     private val firestore: FirebaseFirestore
 ): OrderRepository {
 
+    companion object {
+        const val ID = "id"
+        const val USER_ID = "userId"
+        const val RESTAURANT_ID = "restaurantId"
+        const val RESTAURANT_TITLE = "restaurantTitle"
+        const val ORDER_MENU_LIST = "orderMenuList"
+        const val TITLE = "title"
+        const val DESCRIPTION = "description"
+        const val PRICE = "price"
+        const val IMAGE_URL = "imageUrl"
+        const val ORDER = "order"
+    }
+
     override suspend fun orderMenu(
         userId: String,
         restaurantId: Long,
@@ -21,14 +34,15 @@ class DefaultOrderRepository(
     ): Result = withContext(ioDispatcher) {
         val result: Result
         val orderMenuData = hashMapOf(
-            "restaurantId" to restaurantId,
-            "userId" to userId,
-            "orderMenuList" to foodMenuList,
-            "restaurantTitle" to restaurantTitle
+            RESTAURANT_ID to restaurantId,
+            USER_ID to userId,
+            ORDER_MENU_LIST to foodMenuList,
+            RESTAURANT_TITLE to restaurantTitle
         )
 
         result = try {
-            firestore.collection("order")
+            firestore
+                .collection(ORDER)
                 .add(orderMenuData)
             Result.Success<Any>()
         } catch (e: Exception) {
@@ -52,20 +66,20 @@ class DefaultOrderRepository(
                 //id 는 snapshot 의 id (order 문서내의 id 토큰 값) 그냥 넣어주면 됨
                 OrderEntity(
                     id = it.id,
-                    userId = it.get("userId") as String,
-                    restaurantId = it.get("restaurantId") as Long,
-                    foodMenuList = (it.get("orderMenuList") as ArrayList<Map<String, Any>>).map { food ->
+                    userId = it.get(USER_ID) as String,
+                    restaurantId = it.get(RESTAURANT_ID) as Long,
+                    foodMenuList = (it.get(ORDER_MENU_LIST) as ArrayList<Map<String, Any>>).map { food ->
                         RestaurantFoodEntity(
-                            id = food["id"] as String,
-                            title = food["title"] as String,
-                            description = food["description"] as String,
-                            price = (food["price"] as Long).toInt(),
-                            imageUrl = food["imageUrl"] as String,
-                            restaurantId = food["restaurant"] as Long,
-                            restaurantTitle = food["restaurantTitle"] as String
+                            id = food[ID] as String,
+                            title = food[TITLE] as String,
+                            description = food[DESCRIPTION] as String,
+                            price = (food[PRICE] as Long).toInt(),
+                            imageUrl = food[IMAGE_URL] as String,
+                            restaurantId = food[RESTAURANT_ID] as Long,
+                            restaurantTitle = food[RESTAURANT_TITLE] as String
                         )
                     },
-                    restaurantTitle = it.get("restaurantTitle") as String
+                    restaurantTitle = it.get(RESTAURANT_TITLE) as String
                 )
             })
         } catch (e: Exception) {

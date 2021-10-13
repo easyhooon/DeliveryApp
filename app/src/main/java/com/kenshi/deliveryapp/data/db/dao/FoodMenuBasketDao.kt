@@ -17,7 +17,7 @@ interface FoodMenuBasketDao {
     @Query("SELECT * FROM RestaurantFoodEntity")
     suspend fun getAll(): List<RestaurantFoodEntity>
 
-    @Query("SELECT*FROM RestaurantFoodEntity WHERE restaurantId =:restaurantId")
+    @Query("SELECT * FROM RestaurantFoodEntity WHERE restaurantId =:restaurantId")
     suspend fun getAllByRestaurantId(restaurantId: Long): List<RestaurantFoodEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -26,6 +26,6 @@ interface FoodMenuBasketDao {
     @Query("DELETE FROM RestaurantFoodEntity WHERE id=:foodId")
     suspend fun delete(foodId: String)
 
-    @Query("DELETE FROM RestaurantEntity")
+    @Query("DELETE FROM RestaurantFoodEntity")
     suspend fun deleteAll()
 }

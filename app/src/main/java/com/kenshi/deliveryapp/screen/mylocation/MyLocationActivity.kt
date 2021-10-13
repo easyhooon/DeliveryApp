@@ -55,8 +55,8 @@ class MyLocationActivity: BaseActivity<MyLocationViewModel, ActivityMyLocationBi
     //구글 맵에서 사용할 수 있는 뷰 객체를 초기화
     override fun initViews() = with(binding) {
         toolbar.setNavigationOnClickListener {
-//            finish()
-            onBackPressed()
+            finish()
+            //onBackPressed()
         }
         confirmButton.setOnClickListener {
             viewModel.confirmSelectLocation()
@@ -116,6 +116,7 @@ class MyLocationActivity: BaseActivity<MyLocationViewModel, ActivityMyLocationBi
         //처음엔 적절한 거리로 현재 위치를 보여줘여 함
         if (isMapInitialized.not()) {
             map.moveCamera(
+                //현재 바라봐야 할 카메라 상태 값을 넣음
                 CameraUpdateFactory.newLatLngZoom(
                     LatLng(
                         mapSearchInfo.locationLatLng.latitude,
@@ -128,6 +129,7 @@ class MyLocationActivity: BaseActivity<MyLocationViewModel, ActivityMyLocationBi
             map.setOnCameraIdleListener {
                 //맵의 위치가 바꼈다고 판단
                 if(isChangeLocation.not()) {
+                    //바뀌고 있는 상태다 라는 것을 알림
                     isChangeLocation = true
                     Handler(Looper.getMainLooper()).postDelayed({
                         val cameraLatLng = map.cameraPosition.target

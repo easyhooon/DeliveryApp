@@ -46,13 +46,13 @@ class OrderMenuListViewModel(
         )
     }
 
-    fun clearOrderMenu() = viewModelScope.launch {
-        restaurantFoodRepository.clearFoodMenuListInBasket()
+    fun removeOrderMenu(foodModel: FoodModel) = viewModelScope.launch {
+        restaurantFoodRepository.removeFoodMenuListInBasket(foodModel.foodId)
         fetchData()
     }
 
-    fun removeOrderMenu(foodModel: FoodModel) = viewModelScope.launch {
-        restaurantFoodRepository.removeFoodMenuListInBasket(foodModel.foodId)
+    fun clearOrderMenu() = viewModelScope.launch {
+        restaurantFoodRepository.clearFoodMenuListInBasket()
         fetchData()
     }
 
@@ -66,7 +66,7 @@ class OrderMenuListViewModel(
                 when(val data = orderRepository.orderMenu(user.uid, restaurantId, foodMenuList, restaurantTitle)) {
                     is DefaultOrderRepository.Result.Success<*> -> {
                         restaurantFoodRepository.clearFoodMenuListInBasket()
-                        orderMenuStateLiveData.value = OrderMenuState.Order
+                        orderMenuStateLiveData.value = OrderMenuState.Order //주문 상태
                     }
                     is DefaultOrderRepository.Result.Error -> {
                         orderMenuStateLiveData.value = OrderMenuState.Error(

@@ -1,14 +1,7 @@
 package com.kenshi.deliveryapp.screen.like
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModel
-import com.kenshi.deliveryapp.R
 import com.kenshi.deliveryapp.databinding.FragmentRestaurantLikeListBinding
 import com.kenshi.deliveryapp.model.restaurant.RestaurantModel
 import com.kenshi.deliveryapp.screen.base.BaseFragment

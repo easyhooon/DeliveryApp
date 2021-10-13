@@ -1,6 +1,5 @@
 package com.kenshi.deliveryapp.data.response.restaurant
 
-import android.os.Parcelable
 import com.kenshi.deliveryapp.data.entity.restaurant.RestaurantFoodEntity
 
 data class RestaurantFoodResponse(
